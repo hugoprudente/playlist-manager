@@ -1,0 +1,25 @@
+# base
+
+# testing
+codecov
+pytest
+pytest-cov
+pytest-mock
+commentjson
+tox
+
+# style check
+black
+flake8
+pep8-naming
+flake8-debugger
+flake8-print
+flake8-todo
+radon
+pre-commit
+
+# documentation
+sphinx
+recommonmark
+docutils>=0.14
+aafigure>=0.6

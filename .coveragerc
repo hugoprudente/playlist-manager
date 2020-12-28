@@ -1,0 +1,7 @@
+[run]
+source = playlist
+
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*
