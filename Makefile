@@ -41,11 +41,7 @@ setup-pre-commit:
 run-pre-commit:
 	rm -rf .tox/
 	rm -rf build/
-	@if [ '$(detected_OS)' == Darwin ];then
-	  pre-commit run --files $$(find -E '.*\.\(py\|yaml\|yml\|md\)') -v
-	else
-	  pre-commit run --files $$(find -regex '.*\.\(py\|yaml\|yml\|md\)') -v
-	fi
+	pre-commit run --files $$(find -E '.*\.\(py\|yaml\|yml\|md\)') -v
 
 pep8:
 	# Flake8 ignores
