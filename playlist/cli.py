@@ -3,11 +3,9 @@ import os
 import sys
 from pathlib import Path
 
-from termcolor import colored
-
+from playlist.base import PlaylistGenerator
 from playlist.config import settings
 from playlist.utils.files import read_file
-
 
 CWD = Path.cwd()
 
@@ -24,34 +22,60 @@ def main(argv=None):
 
     argv = (argv or sys.argv)[1:]
 
-    parser = argparse.ArgumentParser(add_help=False)
+    parser = argparse.ArgumentParser(usage="%(prog)s [ spotify | inventory ]")
 
     parser.add_argument(
-        "--debug",
-        default=False,
-        required=False,
-        action="store_true",
-        dest="debug",
-        help="Enable debug logs",
+        "--version",
+        action="version",
+        version="%(prog)s " + read_file_in_root_directory("VERSION"),
     )
-    print(settings.default.FOO)
 
-    # print(settings)
-    main_parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers()
 
-    # services
-    svc_subparsers = main_parser.add_subparsers(title="Service", dest="svc")
+    # service
+    svc_parser = subparsers.add_parser("service", description="service")
+    svc_parser.set_defaults(func="")
 
-    # databases
+    # inventory
+    arc_parser = subparsers.add_parser(
+        "inventory", description="upsert inventory for a given playlist"
+    )
+    arc_parser.set_defaults(func="upsert_inventory")
 
-    # cache
+    arc_parser.add_argument(
+        "playlist", type=str, default="", nargs="?", help="playlist id"
+    )
+
+    arc_parser.add_argument(
+        "-s",
+        "--service",
+        action="store",
+        choices=["spotify"],
+        default=settings.get("inventory.service")
+        if settings.get("inventory.service")
+        else "spotify",
+    )
+
+    arc_parser.add_argument(
+        "-f",
+        "--format",
+        action="store",
+        dest="format",
+        default=settings.get("inventory.format")
+        if settings.get("inventory.format")
+        else "json",
+        choices=["googlesheet", "json"],
+        help="Archive the playlist songs given format",
+    )
 
     # Parse input
-    options, args = main_parser.parse_known_args(argv)
-
+    options, args = parser.parse_known_args(argv)
     try:
-        print("things")
-        # things
+        logs = PlaylistGenerator(**vars(options))
+        if not hasattr(options, "func"):
+            parser.print_help()
+            return 1
+        getattr(logs, options.func)()
     except Exception:
         import platform
         import traceback

@@ -1,5 +1,4 @@
 import io
-import os
 
 
 def read_file(path, **kwargs):
