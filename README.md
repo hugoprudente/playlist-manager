@@ -1,13 +1,22 @@
 # Playlist Manager
 
+>[!WARNING]
+>This is a work in progress...
+
 A CLI to manage playlists and genearte playlists based on public databases.
-
-
 
 ## Example
 
+List of examples
+
+### Inventory
+
+Examples for Inventory usage
+
+#### Upsert an inventory to Google Sheets
+
 ```
-playlist spotify --playlist spotify:playlist:4lU91kdjtDgkQxwSbPE77U archive
+playlist inventory spotify:playlist:4lU91kdjtDgkQxwSbPE77U
 ```
 
 ## Structure and Inspiration

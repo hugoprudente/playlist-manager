@@ -42,10 +42,13 @@ def main(argv=None):
     )
     arc_parser.set_defaults(func="upsert_inventory")
 
-    arc_parser.add_argument(
-        "playlist", type=str, default="", nargs="?", help="playlist id"
+    # inventory required
+    arc_required = arc_parser.add_argument_group("required arguments")
+    arc_required.add_argument(
+        "playlist", type=str, nargs="?", help="playlist id"
     )
 
+    # inventory opotional
     arc_parser.add_argument(
         "-s",
         "--service",
@@ -57,19 +60,31 @@ def main(argv=None):
     )
 
     arc_parser.add_argument(
+        "-t",
+        "--type",
+        action="store",
+        dest="type",
+        default=settings.get("inventory.type")
+        if settings.get("inventory.type")
+        else "json",
+        choices=["googlesheet", "json", "value"],
+        help="type of inventory",
+    )
+
+    arc_parser.add_argument(
         "-f",
         "--format",
         action="store",
         dest="format",
         default=settings.get("inventory.format")
         if settings.get("inventory.format")
-        else "json",
-        choices=["googlesheet", "json"],
-        help="Archive the playlist songs given format",
+        else "",
+        help="output pretty-printed",
     )
 
     # Parse input
     options, args = parser.parse_known_args(argv)
+
     try:
         logs = PlaylistGenerator(**vars(options))
         if not hasattr(options, "func"):
