@@ -2,15 +2,25 @@ import re
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyOauthError
 
 from playlist.config import settings
 
 
 class SpotifyService:
     def __init__(self):
-        self.spotify = spotipy.Spotify(
-            client_credentials_manager=SpotifyClientCredentials()
-        )
+        try:
+            self.spotify = spotipy.Spotify(
+                client_credentials_manager=SpotifyClientCredentials()
+            )
+        except SpotifyOauthError:
+            self.spotify = spotipy.Spotify(
+                client_credentials_manager=SpotifyClientCredentials(
+                    client_id=settings.SPOTIPY_CLIENT_ID,
+                    client_secret=settings.SPOTIPY_CLIENT_SECRET,
+                )
+            )
+
         self.fields = settings.get("spotify.playlist.fields")
         self.track_fields = settings.get("spotify.playlist.track.fields")
 
@@ -43,6 +53,12 @@ class SpotifyService:
     def _id_validator(self, playlist):
         uri_regex = r"spotify:(episode|show|playlist|track|album|artist|user):[a-zA-Z0-9]+"
         id_only_regex = "[a-zA-Z0-9]+"
+
+        if playlist is None:
+            raise ValueError(
+                "Invalid Spotify ID reason: value can't be None, allowed format: < '%s' >"
+                % uri_regex
+            )
 
         if not re.match(uri_regex, playlist) or not re.match(
             id_only_regex, playlist

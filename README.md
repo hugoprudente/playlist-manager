@@ -15,9 +15,23 @@ Examples for Inventory usage
 
 #### Upsert an inventory to Google Sheets
 
-```
+```bash
 playlist inventory spotify:playlist:4lU91kdjtDgkQxwSbPE77U
 ```
+
+#### Upsert to json file only searched fields using JMESpath
+
+as list
+
+```bash
+playtlist inventory --playlist spotify:playlist:4lU91kdjtDgkQxwSbPE77U --format value --fields "[*][track.name, track.album.name, track.album.artists[0].name]"
+```
+
+as dict
+
+```bash
+playlist inventory --playlist spotify:playlist:4lU91kdjtDgkQxwSbPE77U --format value --fields "[*].{Name: track.name, Album: track.album.name, Artist: track.album.artists[0].name}"
+ ```
 
 ## Structure and Inspiration
 

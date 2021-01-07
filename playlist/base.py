@@ -6,6 +6,7 @@
 # from datetime import datetime, timedelta
 # from termcolor import colored
 from playlist.inventories.json_inventory import JSONInventory
+from playlist.inventories.stdout_inventory import StdoutInventory
 from playlist.services.spotify_service import SpotifyService
 
 
@@ -15,7 +16,7 @@ class PlaylistGenerator(object):
         self.type = kwargs.get("type")
         self.playlist = kwargs.get("playlist")
         self.service = kwargs.get("service")
-        self.file = kwargs.get("file")
+        self.output = kwargs.get("output")
         self.format = kwargs.get("format")
         self.fields = kwargs.get("fields")
 
@@ -27,9 +28,9 @@ class PlaylistGenerator(object):
 
         if self.type == "json":
             export = JSONInventory()
-            if self.file is not None:
-                export.writefile(
-                    self.file,
+            if self.output is not None and self.output:
+                export.write_file(
+                    self.output,
                     playlist_tracks,
                     playlist_info,
                     self.fields,
@@ -39,3 +40,9 @@ class PlaylistGenerator(object):
                 export.stdout(
                     playlist_tracks, playlist_info, self.fields, self.format
                 )
+
+        if self.type == "value":
+            export = StdoutInventory()
+            export.stdout(
+                playlist_tracks, playlist_info, self.fields, self.format
+            )

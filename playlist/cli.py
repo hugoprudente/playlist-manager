@@ -45,22 +45,25 @@ def main(argv=None):
     # inventory required
     arc_required = arc_parser.add_argument_group("required arguments")
     arc_required.add_argument(
-        "playlist", type=str, nargs="?", help="playlist id"
+        "--playlist",
+        type=str,
+        nargs="?",
+        help="service playlist id",
+        required=True,
     )
 
     # inventory opotional
     arc_parser.add_argument(
-        "-s",
         "--service",
         action="store",
         choices=["spotify"],
         default=settings.get("inventory.service")
         if settings.get("inventory.service")
         else "spotify",
+        help="supported service name",
     )
 
     arc_parser.add_argument(
-        "-t",
         "--type",
         action="store",
         dest="type",
@@ -68,18 +71,47 @@ def main(argv=None):
         if settings.get("inventory.type")
         else "json",
         choices=["googlesheet", "json", "value"],
-        help="type of inventory",
+        help="inventory storage type",
     )
 
     arc_parser.add_argument(
-        "-f",
         "--format",
         action="store",
         dest="format",
         default=settings.get("inventory.format")
         if settings.get("inventory.format")
         else "",
-        help="output pretty-printed",
+        help="output format using python format syntax",
+    )
+
+    arc_parser.add_argument(
+        "--output",
+        action="store",
+        dest="output",
+        default=settings.get("inventory.output")
+        if settings.get("inventory.output")
+        else "",
+        help="output filename or abspath filename",
+    )
+
+    arc_parser.add_argument(
+        "--fields",
+        action="store",
+        dest="fields",
+        default=settings.get("inventory.fields")
+        if settings.get("inventory.fields")
+        else "",
+        help="jmespath fields query for the output",
+    )
+
+    arc_parser.add_argument(
+        "--service-fields",
+        action="store",
+        dest="service_fields",
+        default=settings.get("inventory.service_fields")
+        if settings.get("inventory.service_fields")
+        else "",
+        help="service fields fields for the query",
     )
 
     # Parse input
