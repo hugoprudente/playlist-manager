@@ -14,17 +14,22 @@ class StdoutInventory:
             expression = jmespath.compile(fields)
             filtered = expression.search(data)
             for line in filtered:
+                if type(line) is dict:
+                    items = line.values()
+                if type(line) is list:
+                    items = line
+                else:
+                    items = [line]
+
                 if format is not None and format:
                     try:
                         formatted = delimiter.join(
-                            format.format(w) for w in line.values()
+                            format.format(w) for w in items
                         )
                     except Exception:
-                        formatted = format.format(*tuple(line.values()))
+                        formatted = format.format(*tuple(items))
                 else:
-                    formatted = delimiter.join(
-                        "{0}".format(w) for w in line.values()
-                    )
+                    formatted = delimiter.join("{0}".format(w) for w in items)
 
                 sys.stdout.write(formatted)
                 sys.stdout.write("\n")
